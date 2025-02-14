@@ -15,21 +15,21 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'cd fullstack-chat-app-master/backend && npm install'
-                sh 'cd fullstack-chat-app-master/frontend && npm install'
+                sh 'cd backend && npm install'
+                sh 'cd frontend && npm install'
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE-backend ./fullstack-chat-app-master/backend'
-                sh 'docker build -t $DOCKER_IMAGE-frontend ./fullstack-chat-app-master/frontend'
+                sh 'docker build -t $DOCKER_IMAGE-backend ./backend'
+                sh 'docker build -t $DOCKER_IMAGE-frontend ./frontend'
             }
         }
 
         stage('Push Docker Images') {
             steps {
-                withDockerRegistry(credentialsId: 'docker-hub-credentials') {
+                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/']) {
                     sh 'docker push $DOCKER_IMAGE-backend'
                     sh 'docker push $DOCKER_IMAGE-frontend'
                 }
@@ -38,8 +38,8 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f fullstack-chat-app-master/k8s/deployment.yaml'
-                sh 'kubectl apply -f fullstack-chat-app-master/k8s/service.yaml'
+                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl apply -f k8s/service.yaml'
             }
         }
     }
