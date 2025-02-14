@@ -15,8 +15,8 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'cd backend && npm install'
-                sh 'cd frontend && npm install'
+                sh 'cd fullstack-chat-app-master/backend && npm install'
+                sh 'cd fullstack-chat-app-master/frontend && npm install'
             }
         }
 
