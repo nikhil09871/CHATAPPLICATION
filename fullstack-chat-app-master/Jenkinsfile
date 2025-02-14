@@ -9,21 +9,21 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', credentialsId: 'github-pat', url: 'https://github.com/nikhil09871/ecommerce.git'
+                git branch: 'main', credentialsId: 'github-pat', url: 'https://github.com/nikhil09871/CHATAPPLICATION.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'cd backend && npm install'
-                sh 'cd frontend && npm install'
+                sh 'cd fullstack-chat-app-master/backend && npm install'
+                sh 'cd fullstack-chat-app-master/frontend && npm install'
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE-backend ./backend'
-                sh 'docker build -t $DOCKER_IMAGE-frontend ./frontend'
+                sh 'docker build -t $DOCKER_IMAGE-backend ./fullstack-chat-app-master/backend'
+                sh 'docker build -t $DOCKER_IMAGE-frontend ./fullstack-chat-app-master/frontend'
             }
         }
 
@@ -38,8 +38,8 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/deployment.yaml'
-                sh 'kubectl apply -f k8s/service.yaml'
+                sh 'kubectl apply -f fullstack-chat-app-master/k8s/deployment.yaml'
+                sh 'kubectl apply -f fullstack-chat-app-master/k8s/service.yaml'
             }
         }
     }
