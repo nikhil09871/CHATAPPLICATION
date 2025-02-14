@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "nikhil09871/mern-chat-app"
+        K8S_DEPLOYMENT = "mern-chat-deployment"
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', credentialsId: 'github-pat', url: 'https://github.com/nikhil09871/ecommerce.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'cd backend && npm install'
+                sh 'cd frontend && npm install'
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE-backend ./backend'
+                sh 'docker build -t $DOCKER_IMAGE-frontend ./frontend'
+            }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                withDockerRegistry(credentialsId: 'docker-hub-credentials') {
+                    sh 'docker push $DOCKER_IMAGE-backend'
+                    sh 'docker push $DOCKER_IMAGE-frontend'
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl apply -f k8s/service.yaml'
+            }
+        }
+    }
+}
+
