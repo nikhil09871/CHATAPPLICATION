@@ -12,7 +12,16 @@ pipeline {
                 git branch: 'main', credentialsId: 'github-pat', url: 'https://github.com/nikhil09871/CHATAPPLICATION.git'
             }
         }
-
+        
+	stage('Install Node.js') {
+    	     steps {
+                 sh '''
+                 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+                 sudo apt install -y nodejs
+        	'''
+ 	   }
+}
+	
         stage('Install Dependencies') {
             steps {
                 sh 'cd fullstack-chat-app-master/backend && npm install'
